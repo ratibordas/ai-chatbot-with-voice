@@ -6,11 +6,11 @@ import { TooltipContent } from "@/components/ui/Tooltip/TooltipContent";
 import { TooltipTrigger} from "@/components/ui/Tooltip/TooltipTrigger";
 import { Send, Paperclip, Trash2, X } from "lucide-react";
 import { Badge } from "@/components/ui/Badge/Badge";
-import { useState } from "react";
+import { useState, memo } from "react";
 import type { ChatInputProps } from "./ChatInput.types";
 
 
-const ChatInput: React.FC<ChatInputProps> = ({
+const ChatInput: React.FC<ChatInputProps> = memo(({
   sendMessage,
   selectedModel,
   clearChat,
@@ -144,6 +144,6 @@ const ChatInput: React.FC<ChatInputProps> = ({
       </div>
     </TooltipProvider>
   );
-};
+});
 
 export default ChatInput;

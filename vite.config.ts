@@ -5,7 +5,11 @@ import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), talwindVitePlugin.default()],
+  plugins: [react({
+    babel: {
+      plugins: ['babel-plugin-react-compiler'],
+    },
+  }), talwindVitePlugin.default()],
   base: "./",
   resolve: {
     alias: {
