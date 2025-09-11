@@ -10,17 +10,18 @@ export const Slider:React.FC<React.ComponentProps<typeof SliderPrimitive.Root>> 
   min = 0,
   max = 100,
   ...props
-})  => {
-  const _values = React.useMemo(
-    () =>
-      Array.isArray(value)
-        ? value
-        : Array.isArray(defaultValue)
-          ? defaultValue
-          : [min, max],
-    [value, defaultValue, min, max]
-  )
+}) => {
+  const getLength = () => {
+    if (Array.isArray(value)) {
+      return value.length;
+    }
+    if (Array.isArray(defaultValue)) {
+      return defaultValue.length;
+    }
 
+    return [min, max].length;
+  }
+ 
   return (
     <SliderPrimitive.Root
       data-slot="slider"
@@ -47,7 +48,7 @@ export const Slider:React.FC<React.ComponentProps<typeof SliderPrimitive.Root>> 
           )}
         />
       </SliderPrimitive.Track>
-      {Array.from({ length: _values.length }, (_, index) => (
+      {Array.from({ length: getLength() }, (_, index) => (
         <SliderPrimitive.Thumb
           data-slot="slider-thumb"
           key={index}

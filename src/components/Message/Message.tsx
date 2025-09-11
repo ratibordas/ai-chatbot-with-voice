@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card/Card";
 import { User, Bot, Volume2, VolumeX } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar/Avatar";
 import { AvatarFallback } from "@/components/ui/Avatar/AvatarFallback";
+import { isChromeOrEdge, isTablet, isSpeechSynthesisSupported } from "../../utils/browserUtils";
 
 export const Message: React.FC<MessageProps> = ({
   msg,
@@ -14,6 +15,8 @@ export const Message: React.FC<MessageProps> = ({
   isPaused,
   currentSpeechText,
 }) => {
+  const shouldShowVoiceOver = isChromeOrEdge() && !isTablet() && isSpeechSynthesisSupported();
+
   const renderIcon = () => {
     if (currentSpeechText === msg.text && synth.paused && isPaused) {
       return <VolumeX onClick={() => speak(msg.text)} className="w-4 h-4" />;
@@ -66,7 +69,7 @@ export const Message: React.FC<MessageProps> = ({
                   hour12: false,
                 })}
               </span>
-              {msg.sender === "bot" && (
+              {msg.sender === "bot" && shouldShowVoiceOver && (
                 <span className="cursor-pointer text-white/60 hover:text-white">
                   {renderIcon()}
                 </span>

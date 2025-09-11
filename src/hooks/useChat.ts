@@ -5,6 +5,7 @@ import { generateId } from "../utils/generateId";
 
 
 export const useChat = (selectedModel: string) => {
+ 
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const isInitialLoad = useRef(true);
