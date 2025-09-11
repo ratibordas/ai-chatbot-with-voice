@@ -47,7 +47,7 @@ export const sendGeminiMessage = async (
         config: {
           mimeType: file.type,
           displayName: file.name,
-          name: sanitizedFileName,
+          name: sanitizedFileName.substring(0, 40),
         },
       });
       fileParts.push(createPartFromUri(filePart.uri!, filePart.mimeType!));
