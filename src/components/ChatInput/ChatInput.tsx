@@ -15,30 +15,30 @@ const ChatInput: React.FC<ChatInputProps> = memo(({
   selectedModel,
   clearChat,
   isLoading,
-  file,
+  files,
   handleFileSelection,
 }) => {
   const [input, setInput] = useState<string>("");
-
+   
   const handleSend = () => {
-    sendMessage(input, setInput, file || undefined, selectedModel);
+    sendMessage(input, setInput, files || undefined, selectedModel);
   };
 
   return (
     <TooltipProvider>
       <div className="space-y-3">
-        {file && (
+        {files && files.length > 0 && (
           <div className="flex items-center justify-between p-3 bg-primary/20 border border-primary/30 rounded-lg">
             <div className="flex items-center gap-2">
-              <Paperclip className="w-4 h-4 text-primary" />
+              <Paperclip className="w-4 h-4 text-white" />
               <span className="text-primary-foreground text-sm font-medium">
-                {file.name}
+                {files.map((file) => file.name).join(", ")}
               </span>
               <Badge
                 variant="secondary"
                 className="bg-primary/20 text-primary-foreground border-primary/30 text-xs"
               >
-                {(file.size / 1024).toFixed(1)} KB
+                {(files.reduce((acc, file) => acc + file.size, 0) / 1024).toFixed(1)} KB
               </Badge>
             </div>
             <Tooltip>
@@ -49,11 +49,11 @@ const ChatInput: React.FC<ChatInputProps> = memo(({
                   variant="ghost"
                   className="text-primary hover:text-primary-foreground hover:bg-primary/20 h-6 w-6 p-0"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-4 h-4 text-white" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Remove attached file</p>
+                <p>Remove attached files</p>
               </TooltipContent>
             </Tooltip>
           </div>
@@ -77,10 +77,11 @@ const ChatInput: React.FC<ChatInputProps> = memo(({
                 <label>
                   <input
                     type="file"
+                    multiple
                     className="hidden"
                     onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (f) handleFileSelection(f);
+                      const selectedFiles = e.target.files ? Array.from(e.target.files) : null;
+                      handleFileSelection(selectedFiles );
                     }}
                     disabled={isLoading}
                   />
@@ -99,7 +100,7 @@ const ChatInput: React.FC<ChatInputProps> = memo(({
               </TooltipTrigger>
               <TooltipContent>
                 <p>
-                  Attach a file
+                  Attach files
                     <span className="block text-xs text-muted-foreground mt-1">
                       Supports: JSONL, JPEG, PNG, GIF, WebP, PDFs and etc
                     </span>
@@ -112,7 +113,7 @@ const ChatInput: React.FC<ChatInputProps> = memo(({
                 <Button
                   onClick={handleSend}
                   size="sm"
-                  disabled={isLoading || (!input.trim() && !file)}
+                  disabled={isLoading || (!input.trim() && (!files || files.length === 0))}
                   className="bg-blue-400/20 hover:bg-blue-800 text-white"
                 >
                   <Send className="w-4 h-4" />

@@ -17,7 +17,7 @@ const App: React.FC = () => {
     isLoading,
     sendMessage,
     clearChat,
-    file,
+    files,
     handleFileSelection,
     numberOfPreviousMessagesAttached,
     setNumberOfPreviousMessagesAttached,
@@ -47,7 +47,7 @@ const App: React.FC = () => {
             clearChat={clearChat}
             isLoading={isLoading}
             handleFileSelection={handleFileSelection}
-            file={file}
+            files={files}
           />
         </div>
       </Card>

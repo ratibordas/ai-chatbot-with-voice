@@ -25,30 +25,34 @@ export const sendGeminiMessage = async (
   messages: Message[],
   input: string,
   numberOfPreviousMessagesAttached: number,
-  file?: File
+  files?: File[]
 ): Promise<BotMessage> => {
   let contents;
-  let filePart;
+  const fileParts = [];
 
   const recentMessages =
     numberOfPreviousMessagesAttached > 0 && messages && messages.length > 0
       ? messages.slice(-numberOfPreviousMessagesAttached)
       : [];
 
-  if (file) {
-    const sanitizedFileName = file.name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+  if (files && files.length > 0) {
+    for (const file of files) {
+      const sanitizedFileName = file.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
 
-    filePart = await ai.files.upload({
-      file: file,
-      config: {
-        mimeType: file.type,
-        displayName: file.name,
-        name: sanitizedFileName,
-      },
-    });
+      const filePart = await ai.files.upload({
+        file: file,
+        config: {
+          mimeType: file.type,
+          displayName: file.name,
+          name: sanitizedFileName,
+        },
+      });
+      fileParts.push(createPartFromUri(filePart.uri!, filePart.mimeType!));
+    }
+
     const contextParts = recentMessages.map((msg) => ({
       role: msg.sender === "bot" ? "model" : msg.sender,
       parts: [{ text: msg.text }],
@@ -56,7 +60,7 @@ export const sendGeminiMessage = async (
 
     const filePartContent = {
       role: "user",
-      parts: [createPartFromUri(filePart.uri!, filePart.mimeType!)],
+      parts: fileParts,
     };
 
     const inputPartContent = {
@@ -65,7 +69,6 @@ export const sendGeminiMessage = async (
     };
 
     contents = [...contextParts, filePartContent, inputPartContent];
-
   } else {
     const fullMessages = [...recentMessages, { text: input, sender: "user" }];
 

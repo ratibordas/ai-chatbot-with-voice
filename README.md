@@ -12,8 +12,8 @@ AI chatbot supporting text messages and files with voiceovers in English and Rus
 
 ## Features
 
-- 🎤 **Voiceover Support** — English & Russian speech synthesis  
-- 📂 **File Upload** — Works with PDFs, documents, images, and more  
+- 🎤 **Voiceover Support** — English & Russian speech synthesis for Edge / Chrome  
+- 📂 **Files Upload** — Works with PDFs, documents, images, and more  
 - 🧠 **Context Management** — Adjustable conversation memory via slider  
 - 📊 **Token Tracking** — Real-time token usage display  
 - 📱 **Responsive UI** — Built with `radix/ui` for accessibility and style  

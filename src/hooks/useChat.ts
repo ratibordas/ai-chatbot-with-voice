@@ -9,7 +9,7 @@ export const useChat = (selectedModel: string) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const isInitialLoad = useRef(true);
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[] | null>(null);
   const [
     numberOfPreviousMessagesAttached,
     setNumberOfPreviousMessagesAttached,
@@ -37,17 +37,17 @@ export const useChat = (selectedModel: string) => {
   const sendMessage = async (
     input: string,
     setInput: (string: string) => void,
-    file?: File,
+    files?: File[],
     selectedModel?: string
   ) => {
-    if ((!input.trim() && !file) || isLoading) return;
+    if ((!input.trim() && (!files || files.length === 0)) || isLoading) return;
     setIsLoading(true);
     setInput("");
 
     const userMsg: Message = {
       id: generateId(),
       sender: "user",
-      text: file ? `file: ${file.name}; ${input}` : input,
+      text: files && files.length > 0 ? `files: ${files.map(f => f.name).join(", ")}; ${input}` : input,
       timestamp: Date.now(),
     };
 
@@ -58,12 +58,12 @@ export const useChat = (selectedModel: string) => {
           messages,
           input,
           numberOfPreviousMessagesAttached,
-          file || undefined
+          files || undefined
         );
       
 
       setMessages((msgs) => [...msgs, botMsg]);
-      if (file) {
+      if (files && files.length > 0) {
         handleFileSelection(null);
       }
       localStorage.setItem(
@@ -88,14 +88,14 @@ export const useChat = (selectedModel: string) => {
 
   const clearChat = () => {
     setMessages([]);
-    setFile(null);
+    setFiles(null);
     localStorage.removeItem(`chatMessages-${selectedModel}`);
     deleteAllGeminiFiles();
     setNumberOfPreviousMessagesAttached(SAVE_MAX_MESSAGES);
   };
 
-  const handleFileSelection = (selectedFile: File | null) => {
-    setFile(selectedFile);
+  const handleFileSelection = (selectedFiles: File[] | null) => {
+    setFiles(selectedFiles);
   };
 
   return {
@@ -103,7 +103,7 @@ export const useChat = (selectedModel: string) => {
     isLoading,
     sendMessage,
     clearChat,
-    file,
+    files,
     handleFileSelection,
     numberOfPreviousMessagesAttached,
     setNumberOfPreviousMessagesAttached,
