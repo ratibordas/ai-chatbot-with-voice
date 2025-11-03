@@ -47,12 +47,12 @@ export const Message: React.FC<MessageProps> = ({
       </Avatar>
 
       <div
-        className={`flex-1 max-w-[80%] ${
+        className={`flex-1 max-w-[80%] min-w-0 ${
           msg.sender === "user" ? "text-right" : "text-left"
         }`}
       >
         <Card
-          className={`p-4 ${
+          className={`p-4 overflow-hidden ${
             msg.sender === "user"
               ? "bg-purple-600/20 border-purple-500/30 ml-auto"
               : "bg-blue-600/20 border-blue-500/30"
@@ -76,11 +76,41 @@ export const Message: React.FC<MessageProps> = ({
               )}
             </div>
 
-            <div className="text-white/90">
+            <div className="text-white/90 break-words">
               {msg.sender === "bot" ? (
-                <ReactMarkdown>{msg.text}</ReactMarkdown>
+                <ReactMarkdown
+                  components={{
+                    code: ({ className, children, ...props }) => {
+                      const isInline = !className;
+                      return (
+                        <code
+                          className={`${className || ""} break-all ${
+                            isInline
+                              ? "bg-white/10 px-1 py-0.5 rounded"
+                              : "block p-2 bg-white/10 rounded overflow-x-auto"
+                          }`}
+                          {...props}
+                        >
+                          {children}
+                        </code>
+                      );
+                    },
+                    pre: ({ children, ...props }) => {
+                      return (
+                        <pre
+                          className="break-all overflow-x-auto whitespace-pre-wrap"
+                          {...props}
+                        >
+                          {children}
+                        </pre>
+                      );
+                    },
+                  }}
+                >
+                  {msg.text}
+                </ReactMarkdown>
               ) : (
-                <p className="whitespace-pre-wrap">{msg.text}</p>
+                <p className="whitespace-pre-wrap break-words">{msg.text}</p>
               )}
             </div>
 
