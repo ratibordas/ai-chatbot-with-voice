@@ -6,7 +6,7 @@ AI chatbot supporting text messages and files with voiceovers in English and Rus
 ---
 
 ## Live Demo
-🔗 [**Try it here**](https://ratibordas.github.io/ai-chatbot-with-voice/)
+🔗 [**Try it here**](https://ratibordas.github.io/ai-chatbot-with-voice/) (You will need your own Gemini API key)
 
 ---
 
