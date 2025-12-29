@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { deleteAllGeminiFiles, SAVE_MAX_MESSAGES, sendGeminiMessage } from "../api/geminiService";
 import type { BotMessage, Message } from "../types/types";
 import { generateId } from "../utils/generateId";
+import { useApiKey } from "../hooks/useApiKey";
 
-
-export const useChat = (selectedModel: string) => {
+export const useChat = () => {
+  const { apiKey, selectedModel } = useApiKey();
  
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,8 +38,7 @@ export const useChat = (selectedModel: string) => {
   const sendMessage = async (
     input: string,
     setInput: (string: string) => void,
-    files?: File[],
-    selectedModel?: string
+    files?: File[]
   ) => {
     if ((!input.trim() && (!files || files.length === 0)) || isLoading) return;
     setIsLoading(true);
@@ -53,8 +53,22 @@ export const useChat = (selectedModel: string) => {
 
     setMessages((msgs) => [...msgs, userMsg]);
 
+    if (!apiKey) {
+      const errorMsg: Message = {
+        id: generateId(),
+        sender: "bot",
+        text: "Error: API key is required. Please validate your API key first.",
+        timestamp: Date.now(),
+      };
+      setMessages((msgs) => [...msgs, errorMsg]);
+      setIsLoading(false);
+      return;
+    }
+
     try {
         const botMsg = await sendGeminiMessage(
+          apiKey!,
+          selectedModel,
           messages,
           input,
           numberOfPreviousMessagesAttached,
@@ -90,7 +104,9 @@ export const useChat = (selectedModel: string) => {
     setMessages([]);
     setFiles(null);
     localStorage.removeItem(`chatMessages-${selectedModel}`);
-    deleteAllGeminiFiles();
+    if (apiKey) {
+      deleteAllGeminiFiles(apiKey);
+    }
     setNumberOfPreviousMessagesAttached(SAVE_MAX_MESSAGES);
   };
 

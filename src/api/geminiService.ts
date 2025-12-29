@@ -4,15 +4,21 @@ import { generateId } from "../utils/generateId";
 
 export const AI_MAX_TOKENS = 100000;
 export const AI_TEMPERATURE = 1.0;
-export const AI_THINKING_BUDGET = 0; // off
-export const AI_MODEL = "gemini-2.5-flash";
+export const AI_THINKING_BUDGET = 0;
 export const SAVE_MAX_MESSAGES = 10;
 
-const ai = new GoogleGenAI({
-  apiKey: import.meta.env.VITE_GEMINI_API_KEY,
-});
+export const validateApiKey = async (apiKey: string): Promise<boolean> => {
+  try {
+    const ai = new GoogleGenAI({ apiKey });
+    await ai.models.list();
+    return true;
+  } catch {
+    return false;
+  }
+};
 
-export const deleteAllGeminiFiles = async (): Promise<void> => {
+export const deleteAllGeminiFiles = async (apiKey: string): Promise<void> => {
+  const ai = new GoogleGenAI({ apiKey });
   const filesPager = await ai.files.list();
   for await (const file of filesPager) {
     if (file.name) {
@@ -22,11 +28,14 @@ export const deleteAllGeminiFiles = async (): Promise<void> => {
 };
 
 export const sendGeminiMessage = async (
+  apiKey: string,
+  model: string,
   messages: Message[],
   input: string,
   numberOfPreviousMessagesAttached: number,
   files?: File[]
 ): Promise<BotMessage> => {
+  const ai = new GoogleGenAI({ apiKey });
   let contents;
   const fileParts = [];
 
@@ -78,7 +87,7 @@ export const sendGeminiMessage = async (
     }));
   }
   const result = await ai.models.generateContent({
-    model: AI_MODEL,
+    model,
     contents,
     config: {
       thinkingConfig: { thinkingBudget: AI_THINKING_BUDGET ?? 10000 },

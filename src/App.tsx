@@ -4,14 +4,10 @@ import Bar from "./components/Bar/Bar";
 import ChatInput from "./components/ChatInput/ChatInput";
 
 import { Card } from "@/components/ui/Card/Card";
-import { AI_MODEL } from "@/api/geminiService";
 import { Loader } from "./components/ui/Loader/Loader";
 import { detectLanguage } from "./utils/detectLanguage";
 
-const selectedModel = AI_MODEL;
-
 const App: React.FC = () => {
-
   const {
     messages,
     isLoading,
@@ -21,7 +17,7 @@ const App: React.FC = () => {
     handleFileSelection,
     numberOfPreviousMessagesAttached,
     setNumberOfPreviousMessagesAttached,
-  } = useChat(selectedModel);
+  } = useChat();
 
   const lastBotMsg = messages.length > 0 && messages[messages.length - 1].sender === 'bot' ? messages[messages.length - 1] : undefined
 
@@ -43,7 +39,6 @@ const App: React.FC = () => {
           </div>
           <ChatInput
             sendMessage={sendMessage}
-            selectedModel={selectedModel}
             clearChat={clearChat}
             isLoading={isLoading}
             handleFileSelection={handleFileSelection}

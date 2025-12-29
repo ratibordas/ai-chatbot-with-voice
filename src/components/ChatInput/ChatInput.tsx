@@ -8,20 +8,22 @@ import { Send, Paperclip, Trash2, X } from "lucide-react";
 import { Badge } from "@/components/ui/Badge/Badge";
 import { useState, memo } from "react";
 import type { ChatInputProps } from "./ChatInput.types";
+import { useApiKey } from "@/hooks/useApiKey";
 
 
 const ChatInput: React.FC<ChatInputProps> = memo(({
   sendMessage,
-  selectedModel,
   clearChat,
   isLoading,
   files,
   handleFileSelection,
 }) => {
+  const { isValidated } = useApiKey();
   const [input, setInput] = useState<string>("");
+  const isDisabled = isLoading || !isValidated;
    
   const handleSend = () => {
-    sendMessage(input, setInput, files || undefined, selectedModel);
+    sendMessage(input, setInput, files || undefined);
   };
 
   return (
@@ -64,11 +66,11 @@ const ChatInput: React.FC<ChatInputProps> = memo(({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !isLoading) handleSend();
+              if (e.key === "Enter" && !isDisabled) handleSend();
             }}
-            placeholder="Type your message..."
+            placeholder={isValidated ? "Type your message..." : "Please validate API key first"}
             className="flex-1 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-white placeholder:text-white"
-            disabled={isLoading}
+            disabled={isDisabled}
           />
 
           <div className="flex items-center gap-1">
@@ -83,13 +85,13 @@ const ChatInput: React.FC<ChatInputProps> = memo(({
                       const selectedFiles = e.target.files ? Array.from(e.target.files) : null;
                       handleFileSelection(selectedFiles );
                     }}
-                    disabled={isLoading}
+                    disabled={isDisabled}
                   />
                   <Button
                     size="sm"
                     variant="ghost"
                     className="text-foreground/70 hover:text-foreground/20 bg-foreground/10"
-                    disabled={isLoading}
+                    disabled={isDisabled}
                     asChild
                   >
                     <span className="cursor-pointer">
@@ -113,7 +115,7 @@ const ChatInput: React.FC<ChatInputProps> = memo(({
                 <Button
                   onClick={handleSend}
                   size="sm"
-                  disabled={isLoading || (!input.trim() && (!files || files.length === 0))}
+                  disabled={isDisabled || (!input.trim() && (!files || files.length === 0))}
                   className="bg-blue-400/20 hover:bg-blue-800 text-white"
                 >
                   <Send className="w-4 h-4" />
