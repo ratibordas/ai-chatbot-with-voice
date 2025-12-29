@@ -68,7 +68,7 @@ const ChatInput: React.FC<ChatInputProps> = memo(({
             onKeyDown={(e) => {
               if (e.key === "Enter" && !isDisabled) handleSend();
             }}
-            placeholder={isValidated ? "Type your message..." : "Please validate API key first"}
+            placeholder={isValidated ? "Type your message..." : "Please enter and validate API key first"}
             className="flex-1 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-white placeholder:text-white"
             disabled={isDisabled}
           />

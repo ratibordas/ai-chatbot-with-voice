@@ -1,7 +1,7 @@
 
 # ai-chatbot-with-voice
 
-AI chatbot supporting text messages and files with voiceovers in English and Russian. Powered by **Google Gemini 2.5 Flash** and React Compiler
+AI chatbot supporting text messages and files with voiceovers in English and Russian. Powered by **Google Gemini** and React Compiler
 
 ---
 
